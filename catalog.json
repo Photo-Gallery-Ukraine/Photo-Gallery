@@ -1,0 +1,31 @@
+[
+  {
+  "id": "1",
+     "category": "Наші картини",
+    "image": "images/1.png",
+    "price": "600 грн",
+    "additional_images": [ "images/1.png", "images/3.png", "images/4.png" ],
+    "sizes": {
+      "40 Х 40": "600 грн",
+      "50 Х 40": "650 грн",
+      "100 Х 80": "1050 грн",
+      "Інше": "Узгодьте ціну"
+    }
+  },
+  {
+    "image": "images/3.png",
+    "price": "730 грн"
+  },
+  {
+    "image": "images/2.png",
+    "price": "570 грн"
+  },
+  {
+    "image": "images/4.png",
+    "price": "800 грн"
+  },
+  {
+    "image": "images/5.png",
+    "price": "780 грн"
+  }
+]

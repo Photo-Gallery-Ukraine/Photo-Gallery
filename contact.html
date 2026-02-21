@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тема</title>
+
+  <!-- Підключення шрифту Gentium Book Plus -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+
+    body.dark {
+      background-color: #212121;
+      color: #ffffff;
+    }
+
+    header {
+      position: relative;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 200px;
+      transform: translateY(-70px);
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 27px;
+      right: 27px;
+      width: 30.5px;
+      height: 30.5px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body.dark .theme-toggle {
+      filter: brightness(0) invert(1);
+    }
+
+    .burger {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 34.5px;
+      height: 34.5px;
+      cursor: pointer;
+      z-index: 1001;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body.dark .burger {
+      filter: brightness(0) invert(1);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 25%;
+      height: 100%;
+      background: #ffffff;
+      padding: 20px;
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+      z-index: 1002;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    body.dark .side-menu {
+      background: #212121;
+    }
+
+    .side-menu.open {
+      transform: translateX(0);
+    }
+
+    .close-btn {
+      width: 34px;
+      cursor: pointer;
+      position: absolute;
+      top: 7.5%;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body.dark .close-btn {
+      filter: brightness(0) invert(1);
+    }
+
+    .menu-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 60%;
+      width: 100%;
+    }
+
+    .menu-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: 24%;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+  padding: 12px 20px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+  width: auto;
+  -webkit-tap-highlight-color: transparent;
+    }
+
+    .menu-nav a img {
+      width: 36px;
+      height: 36px;
+    }
+
+    body.dark .menu-nav a img {
+      filter: brightness(0) invert(1);
+    }
+    
+   p {
+   margin: 5px 0;
+    }
+
+    .contact-container {
+      text-align: center;
+      margin-top: -115px;
+      padding: 0 20px;
+      font-family: 'Gentium Book Plus', Georgia, serif;
+    }
+
+    .contact-text {
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 1.4;
+      margin-bottom: 49px;
+    }
+
+    .social-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 400px;
+      margin: 0 auto;
+      font-family: 'Gentium Book Plus', Georgia, serif;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 20px;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      color: inherit;
+      border: 2px solid #000000;
+      border-radius: 12px;
+      background: transparent;
+      transition: background 0.2s ease;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .social-btn:hover {
+      background: #f1f1f1
+    }
+
+    body.dark .social-btn {
+      border-color: #ffffff;
+    }
+
+    body.dark .social-btn:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .social-btn img {
+      width: 32px;
+      height: 32px;
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        max-width: 220px;
+        transform: translateY(-79px);
+      }
+      .side-menu {
+        width: 90%;
+      }
+      .burger {
+        top: 24px;
+        left: 24px;
+        width: 30px;
+        height: 30px;
+      }
+      .contact-text {
+        font-size: 26px;
+      }
+      .social-btn {
+        font-size: 17px;
+        padding: 12px 18px;
+        max-width: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://www.svgrepo.com/show/325388/menu-scale.svg"
+       class="burger"
+       id="burgerBtn"
+       alt="Меню">
+
+  <div class="side-menu" id="sideMenu">
+    <img src="https://www.svgrepo.com/show/503004/close.svg"
+         class="close-btn"
+         id="closeMenu"
+         alt="Закрити">
+
+    <nav class="menu-nav">
+      <a href="index.html">
+        <img src="https://www.svgrepo.com/show/325290/home-simple-door.svg">
+        <span>Головна</span>
+      </a>
+      <a href="catalog.html">
+        <img src="https://www.svgrepo.com/show/506211/grid-4.svg">
+        <span>Каталог</span>
+      </a>
+      <a href="contact.html">
+        <img src="https://www.svgrepo.com/show/418816/call-centre-communication.svg">
+        <span>Контакти</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <header>
+    <img src="/logo-black.png" class="logo" id="logo" alt="Логотип">
+
+    <img src="https://www.svgrepo.com/show/441032/sun2.svg"
+         class="theme-toggle"
+         id="themeIcon"
+         alt="Тема">
+  </header>
+
+  <div class="contact-container">
+    <div class="contact-text">
+      <p>Для замовлення або зв'язку</p>
+     <p>напишіть нам зручним</p>
+     <p>методом</p>
+    </div>
+
+    <div class="social-buttons">
+      <a href="mailto:info@photo-gallery.pp.ua" class="social-btn">
+        <img src="/mail.svg" alt="Email">
+        Написати на пошту
+      </a>
+      
+      <a href="https://www.instagram.com/photo_gallery_ua" class="social-btn" target="_blank">
+        <img src="/instagram.svg" alt="Instagram">
+        Написати у Instagram
+      </a>
+
+      <a href="https://t.me/mipl_official" class="social-btn" target="_blank">
+        <img src="/telegram.svg" alt="Telegram">
+        Написати у Telegram
+      </a>
+
+      <a href="viber://chat?number=+380969973235" class="social-btn">
+        <img src="/viber.svg" alt="Viber">
+        Написати у Viber
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Зміна теми + збереження
+    const body = document.body;
+    const logo = document.getElementById('logo');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function setTheme(isDark) {
+      body.classList.toggle('dark', isDark);
+      logo.src = isDark ? '/logo-white.png' : '/logo-black.png';
+      themeIcon.src = isDark
+        ? 'https://www.svgrepo.com/show/451116/moon.svg'
+        : 'https://www.svgrepo.com/show/441032/sun2.svg';
+      localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+    }
+
+    const savedDarkMode = localStorage.getItem('darkMode');
+    let darkMode = savedDarkMode === 'true';
+    setTheme(darkMode);
+
+    themeIcon.onclick = () => {
+      darkMode = !darkMode;
+      setTheme(darkMode);
+    };
+
+    // Бургер-меню
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const closeMenu = document.getElementById('closeMenu');
+    const overlay = document.getElementById('overlay');
+
+    burgerBtn.onclick = () => {
+      sideMenu.classList.add('open');
+      overlay.classList.add('show');
+    };
+
+    function closeSidebar() {
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    closeMenu.onclick = closeSidebar;
+    overlay.onclick = closeSidebar;
+  </script>
+</body>
+</html>

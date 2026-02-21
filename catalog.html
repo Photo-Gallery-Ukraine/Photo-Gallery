@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Каталог</title>
+  <meta name="description" content="Каталог картин.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { margin: 0; font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; transition: background-color 0.3s, color 0.3s; overflow-x: hidden; }
+body.dark { background-color: #212121; color: #ffffff; }
+
+header { position: relative; padding: 10px; display: flex; justify-content: center; align-items: center; }
+.logo { max-width: 200px; transform: translateY(-70px); }
+.theme-toggle { position: absolute; top: 27px; right: 27px; width: 30.5px; height: 30.5px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+body.dark .theme-toggle { filter: brightness(0) invert(1); }
+
+.burger { position: absolute; top: 25px; left: 25px; width: 34.5px; height: 34.5px; cursor: pointer; z-index: 1001; -webkit-tap-highlight-color: transparent; }
+body.dark .burger { filter: brightness(0) invert(1); }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+.overlay.show { opacity: 1; pointer-events: auto; }
+
+.side-menu { position: fixed; top: 0; left: 0; width: 25%; height: 100%; background: #ffffff; padding: 20px; transform: translateX(-100%); transition: transform 0.5s ease; z-index: 1002; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; }
+body.dark .side-menu { background: #212121; }
+.side-menu.open { transform: translateX(0); }
+
+.close-btn { width: 34px; cursor: pointer; position: absolute; top: 7.5%; left: 50%; transform: translateX(-50%); -webkit-tap-highlight-color: transparent; }
+body.dark .close-btn { filter: brightness(0) invert(1); }
+
+.menu-nav { display: flex; flex-direction: column; align-items: flex-start; margin-top: 60%; width: 100%; }
+.menu-nav a { 
+  display: inline-flex; align-items: center; gap: 14px;
+  margin-left: 24%; margin-bottom: 30px; font-size: 28px; font-weight: 700;
+  text-decoration: none; color: inherit; padding: 12px 20px; border-radius: 12px;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.menu-nav a img { width: 36px; height: 36px; }
+body.dark .menu-nav a img { filter: brightness(0) invert(1); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; padding: 20px; margin-top: -15px; }
+
+.card { text-align: center; }
+.card img { max-width: 100%; border-radius: 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.price { font-weight: bold; font-size: 18px; margin-left: 12px; }
+.details-btn { -webkit-tap-highlight-color: transparent; padding: 6px 14px; font-size: 13px; border-radius: 8px; border: 1px solid #000000; background: transparent; cursor: pointer; transition: all 0.25s ease; }
+.details-btn:hover { background: #000; color: #fff; }
+body.dark .details-btn { border-color: #fff; color: #fff; }
+body.dark .details-btn:hover { background: #fff; color: #000; }
+
+.additional-images { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.additional-image { -webkit-tap-highlight-color: transparent; width: 100px; height: 100px; object-fit: cover; cursor: pointer; border-radius: 8px; transition: transform 0.3s ease; }
+.additional-image:hover { transform: scale(1.1); }
+
+.size-buttons { display: flex; justify-content: center; gap: 10px; margin: 20px 0 12px; flex-wrap: wrap; }
+.size-btn { background: transparent; border: 1px solid #000000; border-radius: 8px; padding: 6px 12px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; min-width: 44px; }
+body.dark .size-btn { border-color: #ffffff; color: #ffffff; }
+.size-btn:hover { background: rgba(0,0,0,0.07); }
+body.dark .size-btn:hover { background: rgba(255,255,255,0.1); }
+.size-btn.active { background: #000000; color: #ffffff; }
+body.dark .size-btn.active { background: #ffffff; color: #000000; }
+
+.price-buy-container { display: flex; align-items: center; justify-content: space-between; width: 90%; max-width: 600px; margin: 20px auto; padding: 0 8px; }
+.price-detail { font-size: 20px; font-weight: bold; text-align: left; margin: 0; }
+.buy-btn { padding: 10px 24px; font-size: 16px; font-weight: 600; background: #000000; color: #ffffff; border: none; border-radius: 8px; cursor: pointer; transition: background 0.25s ease; }
+.buy-btn:hover { background: #333333; }
+body.dark .buy-btn { background: #ffffff; color: #000000; }
+body.dark .buy-btn:hover { background: #dddddd; }
+
+.page-view { -webkit-tap-highlight-color: transparent; display: none; position: fixed; inset: 0; overflow: auto; padding: 6px; box-sizing: border-box; text-align: center; z-index: 1500; padding-top: 70px; }
+.page-img { width: 650px; max-width: 90%; max-height: 70vh; object-fit: contain; border-radius: 12px; cursor: pointer; }
+
+.view-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 2000; }
+.view-overlay.show { opacity: 1; pointer-events: auto; }
+.view-image { max-width: 90%; max-height: 90vh; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,0.7); }
+.view-close { -webkit-tap-highlight-color: transparent; position: absolute; top: 24px; right: 24px; width: 32px; cursor: pointer; filter: brightness(0) invert(1); }
+.back-icon { position: absolute; top: 20px; left: 15px; width: 32px; height: 32px; cursor: pointer; }
+body.dark .back-icon { filter: brightness(0) invert(1); }
+
+/* ─── Категорії ─── */
+.categories-filter {
+  text-align: center;
+  padding: 0 20px 20px;
+  margin-top: -125px;    
+  -webkit-tap-highlight-color: transparent;
+}
+
+.category-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.categories-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8.5px 15.4px;
+  font-size: 14.8px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+body.dark .categories-btn {
+  border-color: #fff;
+  color: #fff;
+}
+
+.categories-btn img {
+  width: 21px;
+  height: 21px;
+}
+
+body.dark .categories-btn img {
+  filter: brightness(0) invert(1);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  z-index: 10;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+body.dark .dropdown-content {
+  background: #2d2d2d;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+.dropdown-content a {
+  color: #000;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+body.dark .dropdown-content a {
+  color: #fff;
+}
+
+.dropdown-content a:hover {
+  background: #f1f1f1;
+}
+
+body.dark .dropdown-content a:hover {
+  background: #252525;
+}
+
+.dropdown-content a.active {
+  background: #F0F0F2;
+  font-weight: 600;
+}
+
+body.dark .dropdown-content a.active {
+  background: #3a3a3a;
+}
+
+.category-dropdown.active .dropdown-content {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; padding: 22px; }
+  .categories-filter { margin-top: -140px; }
+}
+@media (max-width: 480px) {
+  .logo { max-width: 220px; transform: translateY(-79px); }
+  .grid { margin-top: -30px; }
+  .side-menu { width: 90%; }
+}
+</style>
+</head>
+<body>
+
+<img src="https://www.svgrepo.com/show/325388/menu-scale.svg" class="burger" id="burger" alt="Меню">
+
+<div class="side-menu" id="sideMenu">
+  <img src="https://www.svgrepo.com/show/503004/close.svg" class="close-btn" id="closeMenu" alt="Закрити">
+  <nav class="menu-nav">
+    <a href="index.html"><img src="https://www.svgrepo.com/show/325290/home-simple-door.svg"><span>Головна</span></a>
+    <a href="catalog.html"><img src="https://www.svgrepo.com/show/506211/grid-4.svg"><span>Каталог</span></a>
+    <a href="contact.html"><img src="https://www.svgrepo.com/show/418816/call-centre-communication.svg"><span>Контакти</span></a>
+  </nav>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<header>
+  <img src="/logo-black.png" class="logo" id="logo" alt="Логотип">
+  <img src="https://www.svgrepo.com/show/441032/sun2.svg" class="theme-toggle" id="themeIcon" alt="Тема">
+</header>
+
+<div class="categories-filter">
+  <div class="category-dropdown">
+    <button class="categories-btn" id="categoryBtn">
+      <img src="https://www.svgrepo.com/show/522136/grid.svg" alt="">
+      Категорії
+    </button>
+    <div class="dropdown-content" id="categoryDropdown"></div>
+  </div>
+</div>
+
+<main>
+  <div class="grid" id="productGrid"></div>
+
+  <div class="page-view" id="pageView">
+    <img src="https://www.svgrepo.com/show/459456/left.svg" class="back-icon" id="backIcon" alt="Назад">
+    <img id="pageImage" class="page-img" src="">
+  </div>
+</main>
+
+<div class="view-overlay" id="viewOverlay">
+  <img src="https://www.svgrepo.com/show/503004/close.svg" class="view-close" id="viewClose" alt="Закрити">
+  <img id="viewImage" class="view-image" src="" alt="Велике фото">
+</div>
+
+<script>
+const body = document.body;
+const logo = document.getElementById('logo');
+const themeIcon = document.getElementById('themeIcon');
+let darkMode = localStorage.getItem('darkMode') === 'true';
+
+function setTheme(isDark) {
+  body.classList.toggle('dark', isDark);
+  logo.src = isDark ? '/logo-white.png' : '/logo-black.png';
+  themeIcon.src = isDark ? 'https://www.svgrepo.com/show/451116/moon.svg' : 'https://www.svgrepo.com/show/441032/sun2.svg';
+  localStorage.setItem('darkMode', isDark);
+}
+setTheme(darkMode);
+themeIcon.onclick = () => { darkMode = !darkMode; setTheme(darkMode); };
+
+const burger = document.getElementById('burger');
+const sideMenu = document.getElementById('sideMenu');
+const closeMenu = document.getElementById('closeMenu');
+const overlay = document.getElementById('overlay');
+
+burger.onclick = () => { sideMenu.classList.add('open'); overlay.classList.add('show'); };
+function closeSidebar() { sideMenu.classList.remove('open'); overlay.classList.remove('show'); }
+closeMenu.onclick = closeSidebar;
+overlay.onclick = closeSidebar;
+
+function openProductDetail(product) {
+  const pageView = document.getElementById('pageView');
+  const pageImage = document.getElementById('pageImage');
+  pageImage.src = product.image;
+  pageView.style.display = 'block';
+  pageView.style.backgroundColor = darkMode ? '#212121' : '#ffffff';
+
+  document.querySelector('header').style.display = 'none';
+  document.getElementById('productGrid').style.display = 'none';
+
+  document.querySelectorAll('.additional-images, .size-buttons, .price-buy-container').forEach(el => el?.remove());
+
+  if (product.id) {
+    const url = new URL(window.location);
+    url.searchParams.set('id', product.id);
+    window.history.pushState({ id: product.id }, '', url);
+  }
+
+  const addImgCont = document.createElement('div');
+  addImgCont.className = 'additional-images';
+  (product.additional_images || []).forEach(src => {
+    const img = document.createElement('img');
+    img.src = src; img.className = 'additional-image';
+    img.onclick = () => pageImage.src = src;
+    addImgCont.appendChild(img);
+  });
+  pageView.appendChild(addImgCont);
+
+  let priceDetail;
+  if (product.sizes && Object.keys(product.sizes).length) {
+    const sizesCont = document.createElement('div');
+    sizesCont.className = 'size-buttons';
+    Object.entries(product.sizes).forEach(([sz, pr]) => {
+      const btn = document.createElement('button');
+      btn.className = 'size-btn';
+      btn.textContent = sz;
+      btn.dataset.price = pr;
+      btn.onclick = () => {
+        sizesCont.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        priceDetail.textContent = pr;
+      };
+      sizesCont.appendChild(btn);
+    });
+    pageView.appendChild(sizesCont);
+    if (sizesCont.children.length) sizesCont.children[0].click();
+  }
+
+  const pb = document.createElement('div');
+  pb.className = 'price-buy-container';
+
+  priceDetail = document.createElement('p');
+  priceDetail.className = 'price-detail';
+  priceDetail.textContent = product.price || (product.sizes ? Object.values(product.sizes)[0] : '—');
+
+  const buy = document.createElement('button');
+  buy.className = 'buy-btn';
+  buy.textContent = 'Купити';
+  buy.onclick = () => window.location.href = 'contact.html';
+
+  pb.appendChild(priceDetail);
+  pb.appendChild(buy);
+  pageView.appendChild(pb);
+}
+
+function openViewer(src) {
+  document.getElementById('viewImage').src = src;
+  document.getElementById('viewOverlay').classList.add('show');
+}
+
+let allProducts = [];
+
+function renderProducts(list) {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${p.image}" alt="">
+      <div class="card-bottom">
+        <span class="price">${p.price}</span>
+        <button class="details-btn">Переглянути »</button>
+      </div>
+    `;
+    card.querySelector('img').onclick = () => openViewer(p.image);
+    card.querySelector('.details-btn').onclick = () => openProductDetail(p);
+    grid.appendChild(card);
+  });
+}
+
+fetch('catalog.json')
+.then(r => r.json())
+.then(products => {
+  allProducts = products;
+  renderProducts(products);
+
+  const cats = ['Всі', ...new Set(products.map(p => p.category).filter(Boolean))];
+  const dd = document.getElementById('categoryDropdown');
+  dd.innerHTML = '';
+  cats.forEach(cat => {
+    const a = document.createElement('a');
+    a.textContent = cat;
+    a.dataset.cat = cat === 'Всі' ? '' : cat;
+    a.onclick = () => {
+      dd.querySelectorAll('a').forEach(el => el.classList.remove('active'));
+      a.classList.add('active');
+      const filtered = cat === 'Всі' ? allProducts : allProducts.filter(p => p.category === cat);
+      renderProducts(filtered);
+      document.querySelector('.category-dropdown').classList.remove('active');
+    };
+    dd.appendChild(a);
+  });
+  dd.querySelector('a[data-cat=""]').classList.add('active');
+
+  // ?id=
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (id) {
+    const prod = products.find(p => p.id === id);
+    if (prod) openProductDetail(prod);
+  }
+})
+.catch(err => console.error(err));
+
+// Відкриття/закриття dropdown
+document.getElementById('categoryBtn').onclick = e => {
+  e.stopPropagation();
+  document.querySelector('.category-dropdown').classList.toggle('active');
+};
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.category-dropdown')) {
+    document.querySelector('.category-dropdown')?.classList.remove('active');
+  }
+});
+
+
+document.getElementById('viewClose').onclick = () => document.getElementById('viewOverlay').classList.remove('show');
+document.getElementById('viewOverlay').onclick = e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('show'); };
+
+document.getElementById('pageImage').onclick = () => {
+  const src = document.getElementById('pageImage').src;
+  if (src) openViewer(src);
+};
+
+document.getElementById('backIcon').onclick = () => {
+  document.getElementById('pageView').style.display = 'none';
+  document.querySelector('header').style.display = 'flex';
+  document.getElementById('productGrid').style.display = 'grid';
+  document.querySelectorAll('.additional-images, .size-buttons, .price-buy-container').forEach(el => el?.remove());
+  const url = new URL(location);
+  url.searchParams.delete('id');
+  history.pushState({}, '', url);
+};
+</script>
+</body>
+</html>
